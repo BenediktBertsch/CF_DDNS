@@ -5,4 +5,4 @@ ADD . /app
 WORKDIR /app/src
 RUN go build
 
-ENTRYPOINT [ "/app" ]
+ENTRYPOINT [ "/app/src/main" ]
