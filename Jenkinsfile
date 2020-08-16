@@ -8,7 +8,7 @@ node {
     }
 
     stage('Building image') {
-        app = docker.build(dockerUsername + "/" + registryName + ":$BUILD_NUMBER", registryName + "/")
+        app = docker.build(dockerUsername + "/" + registryName + ":$BUILD_NUMBER", ".")
     }
 
     stage('Test image') {
