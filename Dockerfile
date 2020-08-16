@@ -5,4 +5,4 @@ ADD . /app
 WORKDIR /app/src
 RUN go build
 
-ENTRYPOINT [ "/app/src/main" ]
+ENTRYPOINT [ "/app/src/ddns" ]
