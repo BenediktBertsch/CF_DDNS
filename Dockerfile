@@ -1,8 +1,7 @@
 FROM golang:alpine
-
-RUN mkdir /app
-ADD . /app
 WORKDIR /app/src
-RUN go build
-
+ADD . /app
+RUN apk add build-base &&\
+    go build &&\
+    go test -v
 ENTRYPOINT [ "/app/src/ddns" ]
