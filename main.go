@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/BenediktBertsch/cf_ddns/src/httpclient"
+	"github.com/BenediktBertsch/cf_ddns/httpclient"
 	"strconv"
 	"os"
 	"strings"
