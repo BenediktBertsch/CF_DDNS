@@ -1,7 +1,3 @@
-module github.com/BenediktBertsch/ddns
+module "github.com/BenediktBertsch/cf_ddns/src"
 
 go 1.15
-
-require (
-	github.com/go-resty/resty/v2 v2.3.0
-)
