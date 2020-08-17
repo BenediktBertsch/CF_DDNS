@@ -1,7 +1,7 @@
 FROM golang
-WORKDIR /app/src
+WORKDIR /app
 ADD . /app
 RUN go build &&\
     go test -v 
 
-ENTRYPOINT [ "/app/src/ddns" ]
+ENTRYPOINT [ "/app/ddns" ]
