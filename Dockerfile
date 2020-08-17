@@ -2,7 +2,7 @@ FROM golang
 WORKDIR /app
 ADD . /app
 RUN go build &&\
-    go test -v &&\
-    /app/cf_ddns
+    go test -v 
 
-ENTRYPOINT [ "/bin/bash" ]
+ENTRYPOINT [ "/app/cf_ddns" ]
+    
