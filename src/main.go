@@ -28,7 +28,7 @@ var INTERVAL uint64
 func main() {
 	var ticker *time.Ticker
 	//Only for debugging purposes or if you want to run without environment variables
-	setEnvVariables()
+	//setEnvVariables()
 	if checkConfig(){
 		runEnv()
 		CheckDuration := flag.Duration("duration", time.Duration(INTERVAL), "update interval (ex. 15s, 1m, 6h); if not specified or set to 0s, run only once and exit")
@@ -49,9 +49,9 @@ func runEnv(){
 }
 
 func setEnvVariables(){
-	os.Setenv("CF_TOKENS", "KObvaaqNsAD3xLr65M_xKd9WvHL0hWP2EtjaVY7O,J-FE15bCVTz5AX-GvC9oIFYwHE8VyJWTDNyeZqI1")
-	os.Setenv("CF_ZONES", "85472b423306e2db21a02ca4152dcc92,30d56c18eae907c5038bbd9dd150b62b")
-	os.Setenv("CF_DOMAINS", "xavii.us,b-b.dev")
+	os.Setenv("CF_TOKENS", "")
+	os.Setenv("CF_ZONES", "")
+	os.Setenv("CF_DOMAINS", "")
 	os.Setenv("CF_PROXIES", "")
 	os.Setenv("CF_IPV6", "true,true")
 	os.Setenv("CF_INTERVAL", "")
