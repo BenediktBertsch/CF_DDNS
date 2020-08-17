@@ -1,7 +1,7 @@
 node {
     def app
     def dockerUsername = "xaviius"
-    def registryName = "ddns"
+    def registryName = "cfddns"
 
     stage('Clone repository') {
         checkout scm
