@@ -5,3 +5,5 @@ RUN apk add build-base &&\
     go build &&\
     go test -v &&\
     /app/src/ddns
+
+ENTRYPOINT [ "/app/src/ddns" ]

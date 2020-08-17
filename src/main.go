@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/BenediktBertsch/ddns/httpClient"
+	"github.com/BenediktBertsch/ddns/httpclient"
 	"strconv"
 	"os"
 	"strings"
@@ -28,7 +28,7 @@ var INTERVAL uint64
 func main() {
 	var ticker *time.Ticker
 	//Only for debugging purposes or if you want to run without environment variables
-	//setEnvVariables()
+	setEnvVariables()
 	if checkConfig(){
 		runEnv()
 		CheckDuration := flag.Duration("duration", time.Duration(INTERVAL), "update interval (ex. 15s, 1m, 6h); if not specified or set to 0s, run only once and exit")
@@ -49,11 +49,11 @@ func runEnv(){
 }
 
 func setEnvVariables(){
-	os.Setenv("CF_TOKENS", "")
-	os.Setenv("CF_ZONES", "")
-	os.Setenv("CF_DOMAINS", "")
+	os.Setenv("CF_TOKENS", "KObvaaqNsAD3xLr65M_xKd9WvHL0hWP2EtjaVY7O,J-FE15bCVTz5AX-GvC9oIFYwHE8VyJWTDNyeZqI1")
+	os.Setenv("CF_ZONES", "85472b423306e2db21a02ca4152dcc92,30d56c18eae907c5038bbd9dd150b62b")
+	os.Setenv("CF_DOMAINS", "xavii.us,b-b.dev")
 	os.Setenv("CF_PROXIES", "")
-	os.Setenv("CF_IPV6", "")
+	os.Setenv("CF_IPV6", "true,true")
 	os.Setenv("CF_INTERVAL", "")
 }
 
@@ -71,20 +71,20 @@ func splitEnvVariables(){
 	ZONES = strings.Split(os.Getenv("CF_ZONES"), ",")
 	DOMAINS = strings.Split(os.Getenv("CF_DOMAINS"), ",")
 	temp := strings.Split(os.Getenv("CF_PROXIES"), ",")
-	for i := 0; i < len(temp); i++ {
-		b, err := strconv.ParseBool(temp[i])
-		if err != nil {
+	for i := 0; i < len(TOKENS); i++ {
+		if len(temp)-1 < i {
 			PROXIES = append(PROXIES, false)
 		} else {
+			b, _ := strconv.ParseBool(temp[i])
 			PROXIES = append(PROXIES, b)
 		}
 	}
 	temp = strings.Split(os.Getenv("CF_IPV6"), ",")
-	for i := 0; i < len(temp); i++ {
-		b, err := strconv.ParseBool(temp[i])
-		if err != nil {
+	for i := 0; i < len(TOKENS); i++ {
+		if len(temp)-1 < i {
 			IPV6 = append(IPV6, false)
 		} else {
+			b, _ := strconv.ParseBool(temp[i])
 			IPV6 = append(IPV6, b)
 		}
 	}
@@ -97,22 +97,22 @@ func splitEnvVariables(){
 
 func runddns() {
 	//GetIPv4 and if IPv6 enabled this as well
-	var ipv4, _ = httpClient.GetAddressIpv4()
-	var ipv6, _ = httpClient.GetAddressIpv6()
+	ipv4, _ := httpclient.GetAddressIpv4()
+	ipv6, _ := httpclient.GetAddressIpv6()
 	//Loop over all Cloudflare data
 	//First check if ENV data are set
 	fmt.Println("Checking for updates:", time.Now().Format("15.01.2006 15:04:05"))
 	for i := 0; i < len(TOKENS); i++ {
-		var IDa = httpClient.CheckUpdate("A", ipv4, DOMAINS[i], ZONES[i], TOKENS[i])
+		var IDa = httpclient.CheckUpdate("A", ipv4, DOMAINS[i], ZONES[i], TOKENS[i])
 		if IDa != "" {
-			httpClient.Update(ZONES[i], IDa, TOKENS[i], ipv4, PROXIES[i], DOMAINS[i], "A", httpClient.PREVIOUSIP4)
+			httpclient.Update(ZONES[i], IDa, TOKENS[i], ipv4, PROXIES[i], DOMAINS[i], "A", httpclient.PREVIOUSIP4)
 		}else {
 			fmt.Println("IPv4 of " + DOMAINS[i] + " is still the same.")
 		}
 		if IPV6[i] {
-			var IDaaaa = httpClient.CheckUpdate("AAAA", ipv6, DOMAINS[i], ZONES[i], TOKENS[i])
+			var IDaaaa = httpclient.CheckUpdate("AAAA", ipv6, DOMAINS[i], ZONES[i], TOKENS[i])
 			if IDaaaa != "" {
-				httpClient.Update(ZONES[i], IDaaaa, TOKENS[i], ipv6, PROXIES[i], DOMAINS[i], "AAAA", httpClient.PREVIOUSIP6)
+				httpclient.Update(ZONES[i], IDaaaa, TOKENS[i], ipv6, PROXIES[i], DOMAINS[i], "AAAA", httpclient.PREVIOUSIP6)
 			} else {
 				fmt.Println("IPv6 of " + DOMAINS[i] + " is still the same.")
 			}
