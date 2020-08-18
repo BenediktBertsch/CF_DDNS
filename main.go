@@ -97,27 +97,32 @@ func splitEnvVariables(){
 
 func runddns() {
 	//GetIPv4 and if IPv6 enabled this as well
-	ipv4, _ := httpclient.GetAddressIpv4()
-	ipv6, _ := httpclient.GetAddressIpv6()
+	ipv4, errip4 := httpclient.GetAddressIpv4()
+	ipv6, errip6 := httpclient.GetAddressIpv6()
 	//Loop over all Cloudflare data
 	//First check if ENV data are set
-	fmt.Println("Checking for updates:", time.Now().Format("15.01.2006 15:04:05"))
-	for i := 0; i < len(TOKENS); i++ {
-		var IDa = httpclient.CheckUpdate("A", ipv4, DOMAINS[i], ZONES[i], TOKENS[i])
-		if IDa != "" {
-			httpclient.Update(ZONES[i], IDa, TOKENS[i], ipv4, PROXIES[i], DOMAINS[i], "A", httpclient.PREVIOUSIP4)
-		}else {
-			fmt.Println("IPv4 of " + DOMAINS[i] + " is still the same.")
-		}
-		if IPV6[i] {
-			var IDaaaa = httpclient.CheckUpdate("AAAA", ipv6, DOMAINS[i], ZONES[i], TOKENS[i])
-			if IDaaaa != "" {
-				httpclient.Update(ZONES[i], IDaaaa, TOKENS[i], ipv6, PROXIES[i], DOMAINS[i], "AAAA", httpclient.PREVIOUSIP6)
-			} else {
-				fmt.Println("IPv6 of " + DOMAINS[i] + " is still the same.")
+	if errip4 != nil || errip6 != nil {
+		fmt.Println("Checking for updates:", time.Now().Format("15.01.2006 15:04:05"))
+		for i := 0; i < len(TOKENS); i++ {
+			var IDa = httpclient.CheckUpdate("A", ipv4, DOMAINS[i], ZONES[i], TOKENS[i])
+			if IDa != "" {
+				httpclient.Update(ZONES[i], IDa, TOKENS[i], ipv4, PROXIES[i], DOMAINS[i], "A", httpclient.PREVIOUSIP4)
+			}else {
+				fmt.Println("IPv4 of " + DOMAINS[i] + " is still the same.")
+			}
+			if IPV6[i] {
+				var IDaaaa = httpclient.CheckUpdate("AAAA", ipv6, DOMAINS[i], ZONES[i], TOKENS[i])
+				if IDaaaa != "" {
+					httpclient.Update(ZONES[i], IDaaaa, TOKENS[i], ipv6, PROXIES[i], DOMAINS[i], "AAAA", httpclient.PREVIOUSIP6)
+				} else {
+					fmt.Println("IPv6 of " + DOMAINS[i] + " is still the same.")
+				}
 			}
 		}
+	} else {
+		fmt.Println("DNS Lookup failed.")
 	}
+	
 }
 
 func checkConfig() bool {
