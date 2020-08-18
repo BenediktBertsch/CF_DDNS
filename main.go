@@ -101,7 +101,7 @@ func runddns() {
 	ipv6, errip6 := httpclient.GetAddressIpv6()
 	//Loop over all Cloudflare data
 	//First check if ENV data are set
-	if errip4 != nil || errip6 != nil {
+	if errip4 == nil && errip6 == nil{
 		fmt.Println("Checking for updates:", time.Now().Format("15.01.2006 15:04:05"))
 		for i := 0; i < len(TOKENS); i++ {
 			var IDa = httpclient.CheckUpdate("A", ipv4, DOMAINS[i], ZONES[i], TOKENS[i])
@@ -120,7 +120,8 @@ func runddns() {
 			}
 		}
 	} else {
-		fmt.Println("DNS Lookup failed.")
+		fmt.Println("DNS lookup failed. \n More details: ", errip4)
+		fmt.Println("DNS lookup failed. \n More details: ", errip6)
 	}
 	
 }
