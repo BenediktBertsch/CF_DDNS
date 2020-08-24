@@ -20,8 +20,8 @@ func GetAddressIpv4() (string, error) {
 	if err != nil {
         fmt.Println(err)
 	}
-	defer resp.Body.Close()
 	decoder := json.NewDecoder(resp.Body)
+	defer resp.Body.Close()
 	err = decoder.Decode(&address)
 	if err != nil {
         fmt.Println(err)
@@ -36,8 +36,8 @@ func GetAddressIpv6() (string, error) {
 	if err != nil {
         fmt.Println(err)
 	}
-	defer resp.Body.Close()
 	decoder := json.NewDecoder(resp.Body)
+	defer resp.Body.Close()
 	err = decoder.Decode(&address)
 	if err != nil {
         fmt.Println(err)
@@ -87,8 +87,8 @@ func Update(zone string, id string, token string, ip string, proxy bool, domain 
 	if err != nil {
         fmt.Println(err)
 	}
-	defer resp.Body.Close()
 	decoder := json.NewDecoder(resp.Body)
+	defer resp.Body.Close()
 	err = decoder.Decode(&status)
 	if err != nil {
         fmt.Println(err)
@@ -110,8 +110,8 @@ func CheckUpdate(recordtype string, currentIP string, domain string, zone string
 	if err != nil {
         fmt.Println(err)
 	}
-	defer resp.Body.Close()
 	decoder := json.NewDecoder(resp.Body)
+	defer resp.Body.Close()
 	err = decoder.Decode(&record)
 	if err != nil {
         fmt.Println(err)
