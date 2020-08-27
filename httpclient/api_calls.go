@@ -34,13 +34,13 @@ func GetAddressIpv6() (string, error) {
 	address := address{}
 	resp, err  := http.Get("https://api6.ipify.org?format=json")
 	if err != nil {
-        fmt.Println(err)
+		return "", err
 	}
 	decoder := json.NewDecoder(resp.Body)
 	defer resp.Body.Close()
 	err = decoder.Decode(&address)
 	if err != nil {
-        fmt.Println(err)
+		return "", err
 	}
 	return address.IP, err
 }
