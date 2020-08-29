@@ -101,20 +101,22 @@ func Update(zone string, id string, token string, ip string, proxy bool, domain 
 }
 
 //CheckUpdate = Checks if the update is needed, returns string if empty not needed else returns the zone which needs to be updated
-func CheckUpdate(recordtype string, currentIP string, domain string, zone string, token string) string {
+func CheckUpdate(recordtype string, currentIP string, domain string, zone string, token string) (string, error) {
 	record := records{}
 	req, err := http.NewRequest("GET", "https://api.cloudflare.com/client/v4/zones/" + zone + "/dns_records?type=" + recordtype, nil)
 	req.Header.Add("Authorization", "Bearer " + token)
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-        fmt.Println(err)
+		fmt.Println(err)
+		return "", err
 	}
 	decoder := json.NewDecoder(resp.Body)
 	defer resp.Body.Close()
 	err = decoder.Decode(&record)
 	if err != nil {
-        fmt.Println(err)
+		fmt.Println(err)
+		return "", err
 	}
 	for i := 0; i < len(record.Result); i++ {
 		if record.Result[i].Content != currentIP && record.Result[i].Name == domain{
@@ -124,8 +126,8 @@ func CheckUpdate(recordtype string, currentIP string, domain string, zone string
 			case "AAAA": PREVIOUSIP6 = record.Result[i].Content
 				break;
 			}
-			return record.Result[i].ID
+			return record.Result[i].ID, err
 		}
 	}
-	return ""
+	return "", err
 }
