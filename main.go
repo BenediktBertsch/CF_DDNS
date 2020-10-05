@@ -102,8 +102,6 @@ func splitEnvVariables() {
 }
 
 func runddns() {
-	//GetIPv4
-
 	var (
 		ipv6   string
 		ipv4   string
@@ -115,10 +113,11 @@ func runddns() {
 	//First check if ENV data are set
 	fmt.Println("Checking for updates:", time.Now().Format("15.01.2006 15:04:05"))
 	for i := 0; i < len(TOKENS); i++ {
+		//Get IPv4
 		if ipv4 == "" {
 			ipv4, errip4 = httpclient.GetAddressIpv4()
 		}
-		//Check on Errors
+		//Check on Error
 		if errip4 != nil {
 			fmt.Println("DNS lookup failed. \n More details: ", errip4)
 		} else {
@@ -132,9 +131,11 @@ func runddns() {
 			}
 		}
 		if IPV6[i] {
+			//Get IPv6
 			if ipv6 == "" {
 				ipv6, errip6 = httpclient.GetAddressIpv6()
 			}
+			//Check on Error
 			if errip6 != nil {
 				fmt.Println("DNS lookup failed. \n More details: ", errip6)
 			} else {
