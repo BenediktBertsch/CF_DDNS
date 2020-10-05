@@ -127,7 +127,7 @@ func runddns() {
 			} else if err != nil {
 				fmt.Println("Error on Check: ", err)
 			} else {
-				fmt.Println("IPv6 of " + DOMAINS[i] + " is still the same.")
+				fmt.Println("IPv4 of " + DOMAINS[i] + " is still the same.")
 			}
 		}
 		if IPV6[i] {
