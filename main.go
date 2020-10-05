@@ -59,7 +59,7 @@ func setEnvVariables() {
 	os.Setenv("CF_ZONES", "")
 	os.Setenv("CF_DOMAINS", "")
 	os.Setenv("CF_PROXIES", "")
-	os.Setenv("CF_IPV6", "true,true")
+	os.Setenv("CF_IPV6", "")
 	os.Setenv("CF_INTERVAL", "")
 }
 
@@ -102,14 +102,26 @@ func splitEnvVariables() {
 }
 
 func runddns() {
-	//GetIPv4 and if IPv6 enabled this as well
-	ipv4, errip4 := httpclient.GetAddressIpv4()
-	ipv6, errip6 := httpclient.GetAddressIpv6()
+	//GetIPv4
+
+	var (
+		ipv6   string
+		ipv4   string
+		errip6 error
+		errip4 error
+	)
+
 	//Loop over all Cloudflare data
 	//First check if ENV data are set
-	if errip4 == nil && errip6 == nil {
-		fmt.Println("Checking for updates:", time.Now().Format("15.01.2006 15:04:05"))
-		for i := 0; i < len(TOKENS); i++ {
+	fmt.Println("Checking for updates:", time.Now().Format("15.01.2006 15:04:05"))
+	for i := 0; i < len(TOKENS); i++ {
+		if ipv4 == "" {
+			ipv4, errip4 = httpclient.GetAddressIpv4()
+		}
+		//Check on Errors
+		if errip4 != nil {
+			fmt.Println("DNS lookup failed. \n More details: ", errip4)
+		} else {
 			IDa, err := httpclient.CheckUpdate("A", ipv4, DOMAINS[i], ZONES[i], TOKENS[i])
 			if IDa != "" && err == nil {
 				httpclient.Update(ZONES[i], IDa, TOKENS[i], ipv4, PROXIES[i], DOMAINS[i], "A", httpclient.PREVIOUSIP4)
@@ -118,7 +130,14 @@ func runddns() {
 			} else {
 				fmt.Println("IPv6 of " + DOMAINS[i] + " is still the same.")
 			}
-			if IPV6[i] {
+		}
+		if IPV6[i] {
+			if ipv6 == "" {
+				ipv6, errip6 = httpclient.GetAddressIpv6()
+			}
+			if errip6 != nil {
+				fmt.Println("DNS lookup failed. \n More details: ", errip6)
+			} else {
 				IDaaaa, err := httpclient.CheckUpdate("AAAA", ipv6, DOMAINS[i], ZONES[i], TOKENS[i])
 				if IDaaaa != "" && err == nil {
 					httpclient.Update(ZONES[i], IDaaaa, TOKENS[i], ipv6, PROXIES[i], DOMAINS[i], "AAAA", httpclient.PREVIOUSIP6)
@@ -129,11 +148,7 @@ func runddns() {
 				}
 			}
 		}
-	} else {
-		fmt.Println("DNS lookup failed. \n More details: ", errip4)
-		fmt.Println("DNS lookup failed. \n More details: ", errip6)
 	}
-
 }
 
 func checkConfig() bool {
