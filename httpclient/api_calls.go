@@ -18,13 +18,13 @@ func GetAddressIpv4() (string, error) {
 	address := address{}
 	resp, err  := http.Get("https://api.ipify.org?format=json")
 	if err != nil {
-        fmt.Println(err)
+		return "", err
 	}
 	decoder := json.NewDecoder(resp.Body)
 	defer resp.Body.Close()
 	err = decoder.Decode(&address)
 	if err != nil {
-        fmt.Println(err)
+		return "", err
 	}
 	return address.IP, err
 }
@@ -71,7 +71,7 @@ type address struct {
 }
 
 //Update = Updates the IP
-func Update(zone string, id string, token string, ip string, proxy bool, domain string, recordtype string, previousip string){
+func Update(zone string, id string, token string, ip string, proxy bool, domain string, recordtype string, previousip string) (string, error) {
 	status := recordUpdate{}
 	body := []byte(`{
 		"type": "` + recordtype + `",
@@ -82,21 +82,24 @@ func Update(zone string, id string, token string, ip string, proxy bool, domain 
 	}`)
 	req, err := http.NewRequest("PUT", "https://api.cloudflare.com/client/v4/zones/" + zone + "/dns_records/" + id, bytes.NewBuffer(body))
 	req.Header.Add("Authorization", "Bearer " + token)
+	if err != nil {
+		return "", err
+	}
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-        fmt.Println(err)
+		return "", err
 	}
 	decoder := json.NewDecoder(resp.Body)
 	defer resp.Body.Close()
 	err = decoder.Decode(&status)
 	if err != nil {
-        fmt.Println(err)
+		return "", err
 	}
 	if status.Success {
-		fmt.Println("Domain: " + domain + " got updated with IP: " + ip + " Prvious IP: " + previousip)
+		return "Domain: " + domain + " got updated with IP: " + ip + " Prvious IP: " + previousip, err
 	} else {
-		fmt.Println("Error on updating the IP: " + status.Errors[0].Message)
+		return "Error on updating the IP: " + status.Errors[0].Message, err
 	}
 }
 

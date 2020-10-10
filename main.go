@@ -123,7 +123,12 @@ func runddns() {
 		} else {
 			IDa, err := httpclient.CheckUpdate("A", ipv4, DOMAINS[i], ZONES[i], TOKENS[i])
 			if IDa != "" && err == nil {
-				httpclient.Update(ZONES[i], IDa, TOKENS[i], ipv4, PROXIES[i], DOMAINS[i], "A", httpclient.PREVIOUSIP4)
+				httpstring, httperr := httpclient.Update(ZONES[i], IDa, TOKENS[i], ipv4, PROXIES[i], DOMAINS[i], "A", httpclient.PREVIOUSIP4)
+				if httperr != nil {
+					fmt.Println("Error on Update: ", httperr)
+				} else {
+					fmt.Println(httpstring)
+				}
 			} else if err != nil {
 				fmt.Println("Error on Check: ", err)
 			} else {
@@ -141,7 +146,12 @@ func runddns() {
 			} else {
 				IDaaaa, err := httpclient.CheckUpdate("AAAA", ipv6, DOMAINS[i], ZONES[i], TOKENS[i])
 				if IDaaaa != "" && err == nil {
-					httpclient.Update(ZONES[i], IDaaaa, TOKENS[i], ipv6, PROXIES[i], DOMAINS[i], "AAAA", httpclient.PREVIOUSIP6)
+					httpstring, httperr := httpclient.Update(ZONES[i], IDaaaa, TOKENS[i], ipv6, PROXIES[i], DOMAINS[i], "AAAA", httpclient.PREVIOUSIP6)
+					if httperr != nil {
+						fmt.Println("Error on Update: ", httperr)
+					} else {
+						fmt.Println(httpstring)
+					}
 				} else if err != nil {
 					fmt.Println("Error on Check: ", err)
 				} else {
