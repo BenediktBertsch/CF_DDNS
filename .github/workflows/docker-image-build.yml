@@ -10,9 +10,10 @@ on:
 
 env:
   platforms: "linux/arm/v7,linux/arm64/v8,linux/amd64"
+  registry: "ghcr.io/benediktbertsch/cf-ddns"
 
 jobs:
-  build-backend:
+  build:
     defaults:
       run:
         working-directory: "./backend"
@@ -36,22 +37,26 @@ jobs:
         registry: ghcr.io
         username: ${{github.actor}}
         password: ${{secrets.GITHUB_TOKEN}}
-    - name: Calculate metadata for minimal Docker images
+    - name: Calculate metadata
       uses: docker/metadata-action@8e5442c4ef9f78752691e2d8f8d19755c6f78e81 # v5.5.1
       id: meta
       with:
         images: ${{ github.repository }}
         tags: |
-          type=edge
-          type=semver,pattern={{major}}
+          type=schedule
+          type=ref,event=branch
+          type=ref,event=pr
           type=semver,pattern={{version}}
+          type=semver,pattern={{major}}.{{minor}}
+          type=semver,pattern={{major}}
+          type=sha
       env:
         DOCKER_METADATA_ANNOTATIONS_LEVELS: index
     - name: Build and deploy minimal Docker images
       uses: docker/build-push-action@16ebe778df0e7752d2cfcbd924afdbbd89c1a755 # v6.6.1
       id: build
       with:
-        push: false
+        push: true
         build-args: |
         platforms: ${{ env.platforms }}
         tags: ${{ steps.meta.outputs.tags }}
