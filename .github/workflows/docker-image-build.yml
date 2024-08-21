@@ -51,7 +51,6 @@ jobs:
       uses: docker/build-push-action@16ebe778df0e7752d2cfcbd924afdbbd89c1a755 # v6.6.1
       id: build
       with:
-        target: "minimal"
         push: false
         build-args: |
         platforms: ${{ env.platforms }}
