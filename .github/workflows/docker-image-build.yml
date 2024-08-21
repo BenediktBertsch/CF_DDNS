@@ -67,4 +67,4 @@ jobs:
     - name: Sign the docker images
       if: ${{ github.event_name != 'pull_request' }}
       run: |
-        cosign sign --recursive --yes "benediktbertsch/cf-ddns@${{ steps.build.outputs.digest }}"
+        cosign sign --recursive --yes "ghcr.io/benediktbertsch/cf-ddns@${{ steps.build.outputs.digest }}"
