@@ -1,8 +1,12 @@
 name: Docker Image CI
 
 on:
+  push:
+    branches:
+      - master
   pull_request:
-    branches: [ master ]
+  release:
+    types: [published]
 
 env:
   platforms: "linux/386,linux/arm/v6,linux/arm/v7,linux/arm64/v8,linux/amd64,linux/ppc64le,linux/riscv64,linux/s390x"
@@ -32,12 +36,12 @@ jobs:
         registry: ghcr.io
         username: ${{github.actor}}
         password: ${{secrets.GITHUB_TOKEN}}
-    - name: 🏷️ Fetch git tags for `git describe`
+    - name: Fetch git tags for `git describe`
       run: "git fetch --force --prune --unshallow --tags"
-    - name: 📝 Run `git describe` and save its output
+    - name: Run `git describe` and save its output
       run: echo 'GIT_DESCRIBE='`git describe --tags --always --long` >> $GITHUB_OUTPUT
       id: git-describe
-    - name: 📝 Calculate metadata for minimal Docker images
+    - name: Calculate metadata for minimal Docker images
       uses: docker/metadata-action@8e5442c4ef9f78752691e2d8f8d19755c6f78e81 # v5.5.1
       id: meta
       with:
@@ -48,7 +52,7 @@ jobs:
           type=semver,pattern={{version}}
       env:
         DOCKER_METADATA_ANNOTATIONS_LEVELS: index
-    - name: 🚀 Build and deploy minimal Docker images
+    - name: Build and deploy minimal Docker images
       uses: docker/build-push-action@16ebe778df0e7752d2cfcbd924afdbbd89c1a755 # v6.6.1
       id: build
       with:
